@@ -4,46 +4,12 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/mascanio/disc-dice-go/dice"
-	nre "github.com/mascanio/regexp-named"
+	input "github.com/mascanio/disc-dice-go/user-input"
 )
-
-var RE_DICE = nre.MustCompile(`(?P<n>\d+)?d(?P<d>\d+)`)
-var MAX_DICE = 100
-var MAX_DICE_TYPE = 100
-var PRE_IS_DICE_ROLL_MAX_LEN = 100
-
-func validDiceChar(c rune) bool {
-	return c >= '0' && c <= '9' || c == 'd'
-}
-
-func isDiceRoll(s string) bool {
-	dFound := false
-	diceTypeFound := false
-	for i, c := range s {
-		switch {
-		case i > PRE_IS_DICE_ROLL_MAX_LEN:
-			return false
-		case !validDiceChar(c):
-			return false
-		case !dFound:
-			switch {
-			case c == 'd':
-				dFound = true
-			}
-		case dFound:
-			if c == 'd' {
-				return false
-			}
-			diceTypeFound = true
-		}
-	}
-	return dFound && diceTypeFound
-}
 
 func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	return m.Author.ID == s.State.User.ID
@@ -65,31 +31,12 @@ func rollDices(n int, d int) (int, string) {
 	return sum, result
 }
 
-func getNDiceType(s string) (int, int, error) {
-	_, mm := RE_DICE.FindStringNamed(s)
-	if mm == nil {
-		return 0, 0, fmt.Errorf("no dice found")
-	}
-	nDices, err := strconv.Atoi(mm["n"])
-	if err != nil {
-		nDices = 1
-	}
-	diceType, err := strconv.Atoi(mm["d"])
-	if err != nil {
-		return 0, 0, fmt.Errorf("error converting d to int")
-	}
-	if nDices > MAX_DICE || diceType > MAX_DICE_TYPE {
-		return 0, 0, fmt.Errorf("too many dices or incorrect dice type")
-	}
-	return nDices, diceType, nil
-}
-
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if isBotMessage(s, m) || !isDiceRoll(m.Content) {
+	if isBotMessage(s, m) || !input.IsDiceRoll(m.Content) {
 		return
 	}
 
-	nDices, diceType, err := getNDiceType(m.Content)
+	nDices, diceType, err := input.GetNDiceType(m.Content)
 	if err != nil {
 		s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
 		return
