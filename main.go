@@ -15,15 +15,15 @@ func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	return m.Author.ID == s.State.User.ID
 }
 
-func rollDices(n int, d int) (int, string) {
+func rollDices(nDices int, nFaces int) (int, string) {
 	sum := 0
 	result := "["
-	dice := dice.GenericDice{Faces: d}
-	for i := 0; i < n; i++ {
+	dice := dice.GenericDice{Faces: nFaces}
+	for i := 0; i < nDices; i++ {
 		r := dice.Roll()
 		sum += r.Sum
 		result += r.Result
-		if i < n-1 {
+		if i < nDices-1 {
 			result += ", "
 		}
 	}
@@ -36,7 +36,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	nDices, diceType, err := input.GetNDiceType(m.Content)
+	nDices, diceType, err := input.GetNDicesAndFaces(m.Content)
 	if err != nil {
 		s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
 		return
