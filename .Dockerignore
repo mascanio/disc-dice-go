@@ -1,0 +1,20 @@
+# Ignore everything
+**
+
+# But not these files...
+!go.mod
+!go.sum
+!*.go
+
+# Ignore all test files
+*_test.go
+
+# Ignore all binary files
+bin/
+
+# Ignore all log files
+*.log
+
+# Ignore all OS generated files
+.DS_Store
+Thumbs.db
