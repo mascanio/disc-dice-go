@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/mascanio/disc-dice-go/dice"
 	nre "github.com/mascanio/regexp-named"
 )
 
@@ -49,21 +49,20 @@ func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	return m.Author.ID == s.State.User.ID
 }
 
-func rollDice(n int, d int) []int {
-	r := make([]int, n)
-	for i := 0; i < n; i++ {
-		// generate random number between 1 and d
-		r[i] = rand.Intn(d) + 1
-	}
-	return r
-}
-
-func sumDiceRolls(r []int) int {
+func rollDices(n int, d int) (int, string) {
 	sum := 0
-	for _, v := range r {
-		sum += v
+	result := "["
+	dice := dice.GenericDice{Faces: d}
+	for i := 0; i < n; i++ {
+		r := dice.Roll()
+		sum += r.Sum
+		result += r.Result
+		if i < n-1 {
+			result += ", "
+		}
 	}
-	return sum
+	result += "]"
+	return sum, result
 }
 
 func getNDiceType(s string) (int, int, error) {
@@ -96,10 +95,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	roll := rollDice(nDices, diceType)
-	sum := sumDiceRolls(roll)
+	sum, result := rollDices(nDices, diceType)
 
-	response := fmt.Sprintf("Rolling %dd%d: %v\nSum: %d", nDices, diceType, roll, sum)
+	response := fmt.Sprintf("Rolling %dd%d: %v\nSum: %d", nDices, diceType, result, sum)
 	s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 }
 
