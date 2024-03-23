@@ -15,18 +15,34 @@ import (
 var RE_DICE = nre.MustCompile(`(?P<n>\d+)?d(?P<d>\d+)`)
 var MAX_DICE = 100
 var MAX_DICE_TYPE = 100
+var PRE_IS_DICE_ROLL_MAX_LEN = 100
+
+func validDiceChar(c rune) bool {
+	return c >= '0' && c <= '9' || c == 'd'
+}
 
 func isDiceRoll(s string) bool {
 	dFound := false
-	for _, c := range s {
-		if (c < '0' || c > '9') && !(c == 'd' && !dFound) {
+	diceTypeFound := false
+	for i, c := range s {
+		switch {
+		case i > PRE_IS_DICE_ROLL_MAX_LEN:
 			return false
-		}
-		if !dFound && c == 'd' {
-			dFound = true
+		case !validDiceChar(c):
+			return false
+		case !dFound:
+			switch {
+			case c == 'd':
+				dFound = true
+			}
+		case dFound:
+			if c == 'd' {
+				return false
+			}
+			diceTypeFound = true
 		}
 	}
-	return true
+	return dFound && diceTypeFound
 }
 
 func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
