@@ -7,28 +7,16 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/mascanio/disc-dice-go/dice"
+	"github.com/mascanio/disc-dice-go/multidice"
 	input "github.com/mascanio/disc-dice-go/user-input"
 )
 
-func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
-	return m.Author.ID == s.State.User.ID
+type Messager interface {
+	Message() string
 }
 
-func rollDices(nDices int, nFaces int) (int, string) {
-	sum := 0
-	result := "["
-	dice := dice.GenericDice{Faces: nFaces}
-	for i := 0; i < nDices; i++ {
-		r := dice.Roll()
-		sum += r.Sum
-		result += r.Result
-		if i < nDices-1 {
-			result += ", "
-		}
-	}
-	result += "]"
-	return sum, result
+func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	return m.Author.ID == s.State.User.ID
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -42,10 +30,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	sum, result := rollDices(nDices, diceType)
-
-	response := fmt.Sprintf("Rolling %dd%d: %v\nSum: %d", nDices, diceType, result, sum)
-	s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+	multidice := multidice.MultiDice{Faces: diceType, Dices: nDices}
+	s.ChannelMessageSendReply(m.ChannelID, multidice.Roll().Message(), m.Reference())
 }
 
 func main() {
