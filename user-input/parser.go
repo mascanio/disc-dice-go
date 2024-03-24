@@ -27,5 +27,8 @@ func GetNDicesAndFaces(s string) (int, int, error) {
 	if nDices > MAX_N_DICES || nFaces > MAX_FACES_DICE {
 		return 0, 0, fmt.Errorf("too many dices or incorrect dice faces")
 	}
+	if nFaces < 2 {
+		return 0, 0, fmt.Errorf("dice faces must be at least 2")
+	}
 	return nDices, nFaces, nil
 }
