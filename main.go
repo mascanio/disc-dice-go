@@ -23,12 +23,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	messager, err := input.InputToMessager(m.Content)
-	if err != nil {
-		s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
-		return
-	}
-	s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+	go func() {
+		messager, err := input.InputToMessager(m.Content)
+		if err != nil {
+			s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
+			return
+		}
+		s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+	}()
 }
 
 func main() {
