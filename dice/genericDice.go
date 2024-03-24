@@ -14,19 +14,23 @@ type genericDiceRoll struct {
 	diceResult int
 }
 
-func (d genericDiceRoll) Message() string {
-	return fmt.Sprintf("Rolling 1d%d: %v\n", d.Faces, d.diceResult)
+func (d *genericDiceRoll) RollPrefix() string {
+	return "Rolling 1d" + fmt.Sprintf("%d: ", d.Faces)
 }
 
-func (d genericDiceRoll) RollSum() int {
+func (d *genericDiceRoll) Message() string {
+	return fmt.Sprintf("%v %v\n", d.RollPrefix(), d.RollSum())
+}
+
+func (d *genericDiceRoll) RollSum() int {
 	return d.diceResult
 }
 
-func (d genericDiceRoll) RollStr() string {
+func (d *genericDiceRoll) RollStr() string {
 	return fmt.Sprintf("%v", d.diceResult)
 }
 
 func (d GenericDice) Roll() Roll {
 	result := rand.Intn(d.Faces) + 1
-	return genericDiceRoll{GenericDice: d, diceResult: result}
+	return &genericDiceRoll{GenericDice: d, diceResult: result}
 }

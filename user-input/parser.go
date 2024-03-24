@@ -36,21 +36,44 @@ func getNDicesAndFaces(s string) (int, int, error) {
 	return nDices, nFaces, nil
 }
 
+func getAdder(s string) (int, error) {
+	ss := strings.Split(s, "+")
+	if len(ss) == 2 {
+		s = ss[1]
+		adder, err := strconv.Atoi(s)
+		if err != nil {
+			return 0, fmt.Errorf("error converting adder to int")
+		}
+		return adder, nil
+	}
+	return 0, nil
+}
+
 func buildDiceFromInput(s string) (dice.Roller, error) {
 	// if input contains a
+	var roller dice.Roller
 	if strings.Contains(s, "a") {
-		return dice.AnimaD100{StdOpen: true, AditionalOpen: true, CriticalFailThreshold: 3}, nil
+		roller = dice.AnimaD100{StdOpen: true, AditionalOpen: true, CriticalFailThreshold: 3}
+	} else {
+		nDices, nFaces, err := getNDicesAndFaces(s)
+		if err != nil {
+			return nil, err
+		}
+		switch nDices {
+		case 1:
+			roller = dice.GenericDice{Faces: nFaces}
+		default:
+			roller = dice.MultiDice{Faces: nFaces, Dices: nDices}
+		}
 	}
-	nDices, nFaces, err := getNDicesAndFaces(s)
+	adder, err := getAdder(s)
 	if err != nil {
 		return nil, err
 	}
-	switch nDices {
-	case 1:
-		return dice.GenericDice{Faces: nFaces}, nil
-	default:
-		return dice.MultiDice{Faces: nFaces, Dices: nDices}, nil
+	if adder != 0 {
+		roller = dice.RollAdder{Base: roller, Adder: adder}
 	}
+	return roller, nil
 }
 
 func InputToMessager(s string) (messager.Messager, error) {

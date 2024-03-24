@@ -16,8 +16,12 @@ type multiDiceRoll struct {
 	resultChain string
 }
 
+func (d *multiDiceRoll) RollPrefix() string {
+	return fmt.Sprintf("Rolling %dd%d: ", d.Dices, d.Faces)
+}
+
 func (d *multiDiceRoll) Message() string {
-	return fmt.Sprintf("Rolling %dd%d: %v\nSum: %v\n", d.Dices, d.Faces, d.resultChain, d.sum)
+	return fmt.Sprintf("%v: %v\nTotal: %v\n", d.RollPrefix(), d.RollStr(), d.RollSum())
 }
 
 func (d *multiDiceRoll) RollSum() int {

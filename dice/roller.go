@@ -5,6 +5,7 @@ import (
 )
 
 type Roll interface {
+	RollPrefix() string
 	RollStr() string
 	RollSum() int
 	messager.Messager

@@ -19,8 +19,12 @@ type animaD100Roll struct {
 	acuOpen        int
 }
 
+func (d *animaD100Roll) RollPrefix() string {
+	return "Rolling anima 1d100: "
+}
+
 func (d *animaD100Roll) Message() string {
-	return fmt.Sprintf("Rolling anima 1d100: %v\nTotal: %v\n", d.resultChainStr, d.result)
+	return fmt.Sprintf("%v%v\nTotal: %v\n", d.RollPrefix(), d.RollStr(), d.RollSum())
 }
 
 func (d *animaD100Roll) RollSum() int {

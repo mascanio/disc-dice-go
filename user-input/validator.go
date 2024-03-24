@@ -14,7 +14,7 @@ func IsDiceRoll(s string) bool {
 	if s == "a" {
 		return true
 	}
-	diceTypeFound := false
+	diceType := 'n'
 	diceFacesFound := false
 	plusFound := false
 	for i, c := range s {
@@ -23,30 +23,30 @@ func IsDiceRoll(s string) bool {
 			return false
 		case !validDiceChar(c):
 			return false
-		case !diceTypeFound:
+		case diceType == 'n':
 			switch c {
-			case 'a':
-			case 'd':
-				diceTypeFound = true
+			case 'a', 'd':
+				diceType = c
 			}
-		case diceTypeFound:
+		case diceType != 'n':
 			switch c {
 			case '+':
 				if plusFound {
 					return false
 				} else if i == len(s)-1 {
 					return false
-				} else if !diceFacesFound {
+				} else if !diceFacesFound && diceType == 'd' {
 					return false
 				}
 				plusFound = true
-			case 'a':
-			case 'd':
+			case 'a', 'd':
 				return false
 			default:
-				diceFacesFound = true
+				if diceType == 'd' {
+					diceFacesFound = true
+				}
 			}
 		}
 	}
-	return diceTypeFound && diceFacesFound
+	return diceType != 'n' && (diceFacesFound || diceType == 'a')
 }
