@@ -2,7 +2,7 @@ package dice
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 )
 
 type MultiDice struct {
@@ -37,8 +37,8 @@ func (d MultiDice) Roll() Resulter {
 		results[i] = dice.Roll()
 	}
 
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].ResultSum() < results[j].ResultSum()
+	slices.SortFunc(results, func(lhs, rhs Resulter) int {
+		return lhs.ResultSum() - rhs.ResultSum()
 	})
 
 	resultStr := "["
