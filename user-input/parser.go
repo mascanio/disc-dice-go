@@ -35,15 +35,26 @@ func getNDicesAndFaces(s string) (int, int, error) {
 	return nDices, nFaces, nil
 }
 
-func InputToMessager(s string) (messager.Messager, error) {
+func buildDiceFromInput(s string) (dice.Roller, error) {
+	if s == "a" {
+		return dice.AnimaD100{}, nil
+	}
 	nDices, nFaces, err := getNDicesAndFaces(s)
 	if err != nil {
 		return nil, err
 	}
 	switch nDices {
 	case 1:
-		return dice.GenericDice{Faces: nFaces}.Roll(), nil
+		return dice.GenericDice{Faces: nFaces}, nil
 	default:
-		return dice.MultiDice{Faces: nFaces, Dices: nDices}.Roll(), nil
+		return dice.MultiDice{Faces: nFaces, Dices: nDices}, nil
 	}
+}
+
+func InputToMessager(s string) (messager.Messager, error) {
+	diceRoller, err := buildDiceFromInput(s)
+	if err != nil {
+		return nil, err
+	}
+	return diceRoller.Roll(), nil
 }

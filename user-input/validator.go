@@ -7,6 +7,9 @@ func validDiceChar(c rune) bool {
 }
 
 func IsDiceRoll(s string) bool {
+	if s == "a" {
+		return true
+	}
 	dFound := false
 	diceTypeFound := false
 	for i, c := range s {
