@@ -9,24 +9,24 @@ type GenericDice struct {
 	Faces int
 }
 
-type GenericDiceResult struct {
+type genericDiceRoll struct {
 	GenericDice
 	diceResult int
 }
 
-func (d GenericDiceResult) Message() string {
+func (d genericDiceRoll) Message() string {
 	return fmt.Sprintf("Rolling 1d%d: %v\n", d.Faces, d.diceResult)
 }
 
-func (d GenericDiceResult) ResultSum() int {
+func (d genericDiceRoll) RollSum() int {
 	return d.diceResult
 }
 
-func (d GenericDiceResult) ResultStr() string {
+func (d genericDiceRoll) RollStr() string {
 	return fmt.Sprintf("%v", d.diceResult)
 }
 
-func (d GenericDice) Roll() Resulter {
+func (d GenericDice) Roll() Roll {
 	result := rand.Intn(d.Faces) + 1
-	return GenericDiceResult{GenericDice: d, diceResult: result}
+	return genericDiceRoll{GenericDice: d, diceResult: result}
 }

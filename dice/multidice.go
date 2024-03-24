@@ -10,46 +10,46 @@ type MultiDice struct {
 	Dices int
 }
 
-type MultiDiceResult struct {
+type multiDiceRoll struct {
 	MultiDice
 	sum         int
 	resultChain string
 }
 
-func (d *MultiDiceResult) Message() string {
+func (d *multiDiceRoll) Message() string {
 	return fmt.Sprintf("Rolling %dd%d: %v\nSum: %v\n", d.Dices, d.Faces, d.resultChain, d.sum)
 }
 
-func (d *MultiDiceResult) ResultSum() int {
+func (d *multiDiceRoll) RollSum() int {
 	return d.sum
 }
 
-func (d *MultiDiceResult) ResultStr() string {
+func (d *multiDiceRoll) RollStr() string {
 	return d.resultChain
 }
 
-func (d MultiDice) Roll() Resulter {
+func (d MultiDice) Roll() Roll {
 	sum := 0
 	dice := GenericDice{Faces: d.Faces}
-	results := make([]Resulter, d.Dices)
+	results := make([]Roll, d.Dices)
 	for i := 0; i < d.Dices; i++ {
 		results[i] = dice.Roll()
 	}
 
-	slices.SortFunc(results, func(lhs, rhs Resulter) int {
-		return lhs.ResultSum() - rhs.ResultSum()
+	slices.SortFunc(results, func(lhs, rhs Roll) int {
+		return lhs.RollSum() - rhs.RollSum()
 	})
 
 	resultStr := "["
 	for i := 0; i < d.Dices; i++ {
 		r := results[i]
-		sum += r.ResultSum()
-		resultStr += r.ResultStr()
+		sum += r.RollSum()
+		resultStr += r.RollStr()
 		if i < d.Dices-1 {
 			resultStr += ", "
 		}
 	}
 	resultStr += "]"
 
-	return &MultiDiceResult{MultiDice: d, sum: sum, resultChain: resultStr}
+	return &multiDiceRoll{MultiDice: d, sum: sum, resultChain: resultStr}
 }

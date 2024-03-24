@@ -4,16 +4,12 @@ import (
 	"github.com/mascanio/disc-dice-go/messager"
 )
 
-type Result struct {
-	ResultSum int
-}
-
-type Resulter interface {
-	ResultStr() string
-	ResultSum() int
+type Roll interface {
+	RollStr() string
+	RollSum() int
 	messager.Messager
 }
 
 type Roller interface {
-	Roll() Resulter
+	Roll() Roll
 }

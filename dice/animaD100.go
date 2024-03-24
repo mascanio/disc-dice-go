@@ -12,26 +12,26 @@ type AnimaD100 struct {
 	CriticalFailThreshold int
 }
 
-type AnimaD100Result struct {
+type animaD100Roll struct {
 	AnimaD100
 	result         int
 	resultChainStr string
 	acuOpen        int
 }
 
-func (d *AnimaD100Result) Message() string {
+func (d *animaD100Roll) Message() string {
 	return fmt.Sprintf("Rolling anima 1d100: %v\nTotal: %v\n", d.resultChainStr, d.result)
 }
 
-func (d *AnimaD100Result) ResultSum() int {
+func (d *animaD100Roll) RollSum() int {
 	return d.result
 }
 
-func (d *AnimaD100Result) ResultStr() string {
-	return fmt.Sprintf("%v", d.result)
+func (d *animaD100Roll) RollStr() string {
+	return d.resultChainStr
 }
 
-func (d *AnimaD100Result) addResult(result int) {
+func (d *animaD100Roll) addResult(result int) {
 	d.resultChainStr += fmt.Sprintf("%v", result)
 	d.result += result
 }
@@ -69,7 +69,7 @@ func rOpen(prevRoll, acuOpen int, aditionalOpen bool) (int, []string) {
 	return prevRoll, []string{fmt.Sprintf("%v", prevRoll)}
 }
 
-func (d *AnimaD100Result) roll() {
+func (d *animaD100Roll) roll() {
 	result := rand.Intn(100) + 1
 	switch {
 	case d.result == 0 && result <= d.CriticalFailThreshold:
@@ -86,8 +86,8 @@ func (d *AnimaD100Result) roll() {
 
 }
 
-func (d AnimaD100) Roll() Resulter {
-	result := AnimaD100Result{AnimaD100: d}
+func (d AnimaD100) Roll() Roll {
+	result := animaD100Roll{AnimaD100: d}
 	result.roll()
 	return &result
 }
