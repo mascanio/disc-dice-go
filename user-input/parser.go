@@ -37,7 +37,7 @@ func getNDicesAndFaces(s string) (int, int, error) {
 
 func buildDiceFromInput(s string) (dice.Roller, error) {
 	if s == "a" {
-		return dice.AnimaD100{}, nil
+		return dice.AnimaD100{StdOpen: true, AditionalOpen: true, CriticalFailThreshold: 3}, nil
 	}
 	nDices, nFaces, err := getNDicesAndFaces(s)
 	if err != nil {
