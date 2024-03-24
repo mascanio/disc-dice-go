@@ -7,7 +7,6 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/mascanio/disc-dice-go/multidice"
 	input "github.com/mascanio/disc-dice-go/user-input"
 )
 
@@ -24,14 +23,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	nDices, diceType, err := input.GetNDicesAndFaces(m.Content)
+	messager, err := input.InputToMessager(m.Content)
 	if err != nil {
 		s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
 		return
 	}
-
-	multidice := multidice.MultiDice{Faces: diceType, Dices: nDices}
-	s.ChannelMessageSendReply(m.ChannelID, multidice.Roll().Message(), m.Reference())
+	s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
 }
 
 func main() {
@@ -50,8 +47,7 @@ func main() {
 
 	dg.AddHandler(messageCreate)
 
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
-	dg.Identify.Intents |= discordgo.IntentMessageContent
+	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentMessageContent
 
 	err = dg.Open()
 	if err != nil {

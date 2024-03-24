@@ -1,11 +1,8 @@
-package multidice
+package dice
 
 import (
 	"fmt"
 	"sort"
-
-	"github.com/mascanio/disc-dice-go/dice"
-	"github.com/mascanio/disc-dice-go/roller"
 )
 
 type MultiDice struct {
@@ -15,7 +12,7 @@ type MultiDice struct {
 
 type MultiDiceResult struct {
 	MultiDice
-	roller.Resulter
+	Resulter
 	sum         int
 	resultChain string
 }
@@ -32,10 +29,10 @@ func (d *MultiDiceResult) ResultStr() string {
 	return d.resultChain
 }
 
-func (d *MultiDice) Roll() roller.Resulter {
+func (d MultiDice) Roll() Resulter {
 	sum := 0
-	dice := dice.GenericDice{Faces: d.Faces}
-	results := make([]roller.Resulter, d.Dices)
+	dice := GenericDice{Faces: d.Faces}
+	results := make([]Resulter, d.Dices)
 	for i := 0; i < d.Dices; i++ {
 		results[i] = dice.Roll()
 	}
@@ -55,5 +52,5 @@ func (d *MultiDice) Roll() roller.Resulter {
 	}
 	resultStr += "]"
 
-	return &MultiDiceResult{MultiDice: *d, sum: sum, resultChain: resultStr}
+	return &MultiDiceResult{MultiDice: d, sum: sum, resultChain: resultStr}
 }

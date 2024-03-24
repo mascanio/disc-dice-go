@@ -3,8 +3,6 @@ package dice
 import (
 	"fmt"
 	"math/rand"
-
-	"github.com/mascanio/disc-dice-go/roller"
 )
 
 type GenericDice struct {
@@ -13,7 +11,7 @@ type GenericDice struct {
 
 type GenericDiceResult struct {
 	GenericDice
-	roller.Resulter
+	Resulter
 	diceResult int
 }
 
@@ -29,7 +27,7 @@ func (d GenericDiceResult) ResultStr() string {
 	return fmt.Sprintf("%v", d.diceResult)
 }
 
-func (d *GenericDice) Roll() roller.Resulter {
+func (d GenericDice) Roll() Resulter {
 	result := rand.Intn(d.Faces) + 1
-	return GenericDiceResult{GenericDice: *d, diceResult: result}
+	return GenericDiceResult{GenericDice: d, diceResult: result}
 }
