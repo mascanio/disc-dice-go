@@ -12,7 +12,6 @@ type MultiDice struct {
 
 type MultiDiceResult struct {
 	MultiDice
-	Resulter
 	sum         int
 	resultChain string
 }

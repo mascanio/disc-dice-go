@@ -14,7 +14,6 @@ type AnimaD100 struct {
 
 type AnimaD100Result struct {
 	AnimaD100
-	Resulter
 	result         int
 	resultChainStr string
 	acuOpen        int

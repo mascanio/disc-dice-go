@@ -11,7 +11,6 @@ type GenericDice struct {
 
 type GenericDiceResult struct {
 	GenericDice
-	Resulter
 	diceResult int
 }
 
