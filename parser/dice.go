@@ -11,7 +11,7 @@ import (
 var re_dice = nre.MustCompile(`(?P<n>\d+)?d(?P<d>\d+)`)
 
 var max_n_dices = 100
-var max_faces_dice = 100
+var max_faces_dice = 1000
 
 func getNDicesAndFaces(s string) (int, int, error) {
 	_, mm := re_dice.FindStringNamed(s)

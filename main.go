@@ -9,7 +9,6 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/mascanio/disc-dice-go/parser"
-	input "github.com/mascanio/disc-dice-go/user-input"
 )
 
 type Messager interface {
@@ -21,20 +20,17 @@ func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if isBotMessage(s, m) || !input.IsDiceRoll(m.Content) {
+	if isBotMessage(s, m) {
 		return
 	}
-
 	go func() {
 		defer func(timeStart time.Time) {
 			fmt.Println("Time elapsed: ", time.Since(timeStart))
 		}(time.Now())
-		messager, err := parser.InputToMessager(m.Content)
-		if err != nil {
-			s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
-			return
+		messager := parser.InputToMessager(m.Content)
+		if messager != nil {
+			s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
 		}
-		s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
 	}()
 }
 

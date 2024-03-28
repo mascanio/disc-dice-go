@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/mascanio/disc-dice-go/dice"
@@ -31,33 +32,40 @@ func splitAdder(s string) (string, int, error) {
 	return s, 0, nil
 }
 
-func buildRollerFromInput(s string) (dice.Roller, error) {
-	s, adder, err := splitAdder(s)
-	if err != nil {
-		return nil, err
-	}
-
-	var roller dice.Roller
+func parseBaseRoller(s string) dice.Roller {
 	for _, parser := range parsers {
-		roller = parser(s)
+		roller := parser(s)
 		if roller != nil {
-			break
+			return roller
 		}
 	}
+	return nil
+}
 
+func buildRollerFromInput(s string) dice.Roller {
+	s, adder, err := splitAdder(s)
+	if err != nil {
+		return nil
+	}
+	s = strings.TrimSpace(s)
+	roller := parseBaseRoller(s)
+	if roller == nil {
+		return nil
+	}
 	if adder != 0 {
 		roller = dice.RollAdder{Base: roller, Adder: adder}
 	}
-	return roller, nil
+	return roller
 }
 
-func InputToMessager(s string) (messager.Messager, error) {
+func InputToMessager(s string) messager.Messager {
 	defer func(timeStart time.Time) {
 		fmt.Println("Time elapsed input: ", time.Since(timeStart))
 	}(time.Now())
-	diceRoller, err := buildRollerFromInput(s)
-	if err != nil {
-		return nil, err
+	s = strings.TrimSpace(s)
+	diceRoller := buildRollerFromInput(s)
+	if diceRoller == nil {
+		return nil
 	}
-	return diceRoller.Roll(), nil
+	return diceRoller.Roll()
 }
