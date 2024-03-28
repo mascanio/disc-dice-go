@@ -13,6 +13,7 @@ import (
 var parsers = []func(string) roller.Roller{
 	ParseAnima,
 	ParseDice,
+	ParseAbility,
 }
 
 func splitAdder(s string) (string, int, error) {
