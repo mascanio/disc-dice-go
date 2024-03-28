@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	input "github.com/mascanio/disc-dice-go/user-input"
@@ -24,6 +25,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	go func() {
+		defer func(timeStart time.Time) {
+			fmt.Println("Time elapsed: ", time.Since(timeStart))
+		}(time.Now())
 		messager, err := input.InputToMessager(m.Content)
 		if err != nil {
 			s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())

@@ -3,7 +3,7 @@ package userinput
 import (
 	"fmt"
 	"strconv"
-	"strings"
+	"time"
 
 	"github.com/mascanio/disc-dice-go/dice"
 	"github.com/mascanio/disc-dice-go/messager"
@@ -36,23 +36,30 @@ func getNDicesAndFaces(s string) (int, int, error) {
 	return nDices, nFaces, nil
 }
 
-func getAdder(s string) (int, error) {
-	ss := strings.Split(s, "+")
-	if len(ss) == 2 {
-		s = ss[1]
-		adder, err := strconv.Atoi(s)
-		if err != nil {
-			return 0, fmt.Errorf("error converting adder to int")
+func splitAdder(s string) (string, int, error) {
+	for i, r := range s {
+		switch r {
+		case '+', '-':
+			adder, err := strconv.Atoi(s[i+1:])
+			if err != nil {
+				return "", 0, fmt.Errorf("error converting adder to int")
+			}
+			if r == '-' {
+				adder = -adder
+			}
+			return s[:i], adder, nil
 		}
-		return adder, nil
 	}
-	return 0, nil
+	return s, 0, nil
 }
 
 func buildDiceFromInput(s string) (dice.Roller, error) {
-	// if input contains a
+	s, adder, err := splitAdder(s)
+	if err != nil {
+		return nil, err
+	}
 	var roller dice.Roller
-	if strings.Contains(s, "a") {
+	if s == "a" {
 		roller = dice.AnimaD100{StdOpen: true, AditionalOpen: true, CriticalFailThreshold: 3}
 	} else {
 		nDices, nFaces, err := getNDicesAndFaces(s)
@@ -66,10 +73,6 @@ func buildDiceFromInput(s string) (dice.Roller, error) {
 			roller = dice.MultiDice{Faces: nFaces, Dices: nDices}
 		}
 	}
-	adder, err := getAdder(s)
-	if err != nil {
-		return nil, err
-	}
 	if adder != 0 {
 		roller = dice.RollAdder{Base: roller, Adder: adder}
 	}
@@ -77,6 +80,9 @@ func buildDiceFromInput(s string) (dice.Roller, error) {
 }
 
 func InputToMessager(s string) (messager.Messager, error) {
+	defer func(timeStart time.Time) {
+		fmt.Println("Time elapsed input: ", time.Since(timeStart))
+	}(time.Now())
 	diceRoller, err := buildDiceFromInput(s)
 	if err != nil {
 		return nil, err

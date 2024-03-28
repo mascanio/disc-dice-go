@@ -3,7 +3,7 @@ package userinput
 var PRE_IS_DICE_ROLL_MAX_LEN = 20
 
 func validDiceChar(c rune) bool {
-	return isNumber(c) || c == 'd' || c == 'a' || c == '+'
+	return isNumber(c) || c == 'd' || c == 'a' || c == '+' || c == '-'
 }
 
 func isNumber(c rune) bool {
@@ -30,7 +30,7 @@ func IsDiceRoll(s string) bool {
 			}
 		case diceType != 'n':
 			switch c {
-			case '+':
+			case '+', '-':
 				if plusFound {
 					return false
 				} else if i == len(s)-1 {
