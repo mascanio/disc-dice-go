@@ -1,4 +1,4 @@
-package dice
+package roller
 
 import (
 	"github.com/mascanio/disc-dice-go/messager"

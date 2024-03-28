@@ -1,4 +1,4 @@
-package dice
+package roller
 
 import "fmt"
 

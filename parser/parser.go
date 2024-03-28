@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mascanio/disc-dice-go/dice"
 	"github.com/mascanio/disc-dice-go/messager"
+	"github.com/mascanio/disc-dice-go/roller"
 )
 
-var parsers = []func(string) dice.Roller{
+var parsers = []func(string) roller.Roller{
 	ParseAnima,
 	ParseDice,
 }
@@ -32,7 +32,7 @@ func splitAdder(s string) (string, int, error) {
 	return s, 0, nil
 }
 
-func parseBaseRoller(s string) dice.Roller {
+func parseBaseRoller(s string) roller.Roller {
 	for _, parser := range parsers {
 		roller := parser(s)
 		if roller != nil {
@@ -42,20 +42,20 @@ func parseBaseRoller(s string) dice.Roller {
 	return nil
 }
 
-func buildRollerFromInput(s string) dice.Roller {
+func buildRollerFromInput(s string) roller.Roller {
 	s, adder, err := splitAdder(s)
 	if err != nil {
 		return nil
 	}
 	s = strings.TrimSpace(s)
-	roller := parseBaseRoller(s)
-	if roller == nil {
+	baseRoller := parseBaseRoller(s)
+	if baseRoller == nil {
 		return nil
 	}
 	if adder != 0 {
-		roller = dice.RollAdder{Base: roller, Adder: adder}
+		baseRoller = roller.RollAdder{Base: baseRoller, Adder: adder}
 	}
-	return roller
+	return baseRoller
 }
 
 func InputToMessager(s string) messager.Messager {

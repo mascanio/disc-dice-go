@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mascanio/disc-dice-go/dice"
+	"github.com/mascanio/disc-dice-go/roller"
 	nre "github.com/mascanio/regexp-named"
 )
 
@@ -35,15 +35,15 @@ func getNDicesAndFaces(s string) (int, int, error) {
 	return nDices, nFaces, nil
 }
 
-func ParseDice(s string) dice.Roller {
+func ParseDice(s string) roller.Roller {
 	nDices, nFaces, err := getNDicesAndFaces(s)
 	if err != nil {
 		return nil
 	}
 	switch nDices {
 	case 1:
-		return dice.GenericDice{Faces: nFaces}
+		return roller.GenericDice{Faces: nFaces}
 	default:
-		return dice.MultiDice{Faces: nFaces, Dices: nDices}
+		return roller.MultiDice{Faces: nFaces, Dices: nDices}
 	}
 }
