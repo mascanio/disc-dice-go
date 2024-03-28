@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/mascanio/disc-dice-go/parser"
 	input "github.com/mascanio/disc-dice-go/user-input"
 )
 
@@ -28,7 +29,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		defer func(timeStart time.Time) {
 			fmt.Println("Time elapsed: ", time.Since(timeStart))
 		}(time.Now())
-		messager, err := input.InputToMessager(m.Content)
+		messager, err := parser.InputToMessager(m.Content)
 		if err != nil {
 			s.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
 			return
