@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/mascanio/disc-dice-go/parser"
+	"github.com/mascanio/disc-dice-go/internal/parser"
 )
 
 type Messager interface {

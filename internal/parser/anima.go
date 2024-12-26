@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/mascanio/disc-dice-go/roller"
+	"github.com/mascanio/disc-dice-go/internal/roller"
 )
 
 func ParseAnima(s string) roller.Roller {

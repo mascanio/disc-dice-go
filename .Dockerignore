@@ -18,3 +18,5 @@ bin/
 # Ignore all OS generated files
 .DS_Store
 Thumbs.db
+
+.git

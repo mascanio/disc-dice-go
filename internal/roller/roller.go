@@ -1,7 +1,7 @@
 package roller
 
 import (
-	"github.com/mascanio/disc-dice-go/messager"
+	"github.com/mascanio/disc-dice-go/internal/messager"
 )
 
 type Roll interface {

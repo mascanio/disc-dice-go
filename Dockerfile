@@ -6,9 +6,10 @@ WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . .
+COPY cmd/ cmd/
+COPY internal/ internal/
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -tags timetzdata -o app .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -tags timetzdata -o app ./cmd/main.go
 
 #final
 FROM scratch

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mascanio/disc-dice-go/messager"
-	"github.com/mascanio/disc-dice-go/roller"
+	"github.com/mascanio/disc-dice-go/internal/messager"
+	"github.com/mascanio/disc-dice-go/internal/roller"
 )
 
 var parsers = []func(string) roller.Roller{

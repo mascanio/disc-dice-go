@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/mascanio/disc-dice-go/roller"
+	"github.com/mascanio/disc-dice-go/internal/roller"
 )
 
 func ParseAbility(s string) roller.Roller {
