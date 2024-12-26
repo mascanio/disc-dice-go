@@ -35,7 +35,7 @@ jobs:
       id: key
       shell: sh
       run: |
-        echo "key"=$(cat ${{ go.sum }} | md5sum | cut -d\  -f1) >> $GITHUB_OUTPUT
+        echo "key"=$(cat go.sum | md5sum | cut -d\  -f1) >> $GITHUB_OUTPUT
 
     - name: Go Build Cache
       id: build-cache
