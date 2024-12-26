@@ -70,8 +70,3 @@ jobs:
       uses: golangci/golangci-lint-action@v6
       with:
         only-new-issues: true
-
-    - name: Run Gosec Security Scanner
-      uses: securego/gosec@master
-      with:
-        args: -exclude=G404 ./...

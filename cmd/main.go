@@ -55,7 +55,9 @@ func main() {
 		slog.Error("Error opening connection", slog.Any("err", err))
 		return
 	}
-	defer dg.Close()
+	defer func() {
+		_ = dg.Close()
+	}()
 
 	slog.Info("Bot is now running. Press CTRL+C to exit.")
 	sc := make(chan os.Signal, 1)
