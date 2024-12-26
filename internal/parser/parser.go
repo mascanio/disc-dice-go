@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -61,7 +62,7 @@ func buildRollerFromInput(s string) roller.Roller {
 
 func InputToMessager(s string) messager.Messager {
 	defer func(timeStart time.Time) {
-		fmt.Println("Time elapsed input: ", time.Since(timeStart))
+		slog.Debug("InputToMessager", "time_taken_us", time.Since(timeStart).Microseconds())
 	}(time.Now())
 	s = strings.TrimSpace(s)
 	diceRoller := buildRollerFromInput(s)

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -10,10 +10,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/mascanio/disc-dice-go/internal/parser"
 )
-
-type Messager interface {
-	Message() string
-}
 
 func isBotMessage(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	return m.Author.ID == s.State.User.ID
@@ -25,7 +21,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	go func() {
 		defer func(timeStart time.Time) {
-			fmt.Println("Time elapsed: ", time.Since(timeStart))
+			slog.Debug("messageCreate", "time_taken_us", time.Since(timeStart).Microseconds())
 		}(time.Now())
 		messager := parser.InputToMessager(m.Content)
 		if messager != nil {
@@ -35,32 +31,63 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func main() {
-	token := os.Getenv("TOKEN")
+	setupLogger()
 
+	token := os.Getenv("TOKEN")
 	if token == "" {
-		fmt.Println("No token provided. Please set TOKEN environment variable.")
+		slog.Error("No token provided. Please set TOKEN environment variable.")
 		return
 	}
 
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		fmt.Println("Error creating Discord session: ", err)
+		slog.Error("Error creating Discord session.", slog.Any("err", err))
 		return
 	}
-
-	dg.AddHandler(messageCreate)
-
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentMessageContent
+	dg.AddHandler(messageCreate)
 
 	err = dg.Open()
 	if err != nil {
-		fmt.Println("Error opening connection: ", err)
+		slog.Error("Error opening connection", slog.Any("err", err))
 		return
 	}
 	defer dg.Close()
 
-	fmt.Println("Bot is now running. Press CTRL+C to exit.")
+	slog.Info("Bot is now running. Press CTRL+C to exit.")
 	sc := make(chan os.Signal, 1)
+	defer close(sc)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
+}
+
+func setupLogger() {
+	logLevelStr := os.Getenv("LOG_LEVEL")
+	if logLevelStr == "" {
+		logLevelStr = "INFO"
+	}
+
+	var logLevel slog.Level
+
+	switch logLevelStr {
+	case "DEBUG":
+		logLevel = slog.LevelDebug
+	case "INFO":
+		logLevel = slog.LevelInfo
+	case "WARN":
+		logLevel = slog.LevelWarn
+	case "ERROR":
+		logLevel = slog.LevelError
+	default:
+		logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: logLevel,
+		}))
+		logger.Error("Unrecognized LOG_LEVEL", "inputLogLevel", logLevelStr)
+		os.Exit(1)
+	}
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: logLevel,
+	}))
+	slog.SetDefault(logger)
 }
