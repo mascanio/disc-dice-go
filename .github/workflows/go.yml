@@ -38,26 +38,14 @@ jobs:
         echo "key"=$(cat go.sum | md5sum | cut -d\  -f1) >> $GITHUB_OUTPUT
 
     - name: Go Build Cache
-      id: build-cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.go-cache-paths.outputs.go-cache-dir }}
+        path: ${{ steps.go-cache-paths.outputs.go-cache-dir }}, ${{ steps.go-cache-paths.outputs.go-mod-cache-dir }}
         key: go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}-${{ steps.key.outputs.key }}
         restore-keys: |
           go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}
           go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}
           go-build-${{ runner.os }}-${{ runner.arch }}
-
-    - name: Go Mod Cache
-      id: mod-cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.go-cache-paths.outputs.go-mod-cache-dir }}
-        key: go-mod-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}-${{ steps.key.outputs.key }}
-        restore-keys: |
-          go-mod-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}
-          go-mod-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}
-          go-mod-${{ runner.os }}-${{ runner.arch }}
 
     - name: Build
       run: go build ./...
