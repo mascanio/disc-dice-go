@@ -1,6 +1,6 @@
 module github.com/mascanio/disc-dice-go
 
-go 1.22.1
+go 1.23
 
 require (
 	github.com/bwmarrin/discordgo v0.28.1
