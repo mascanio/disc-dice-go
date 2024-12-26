@@ -11,6 +11,14 @@ on:
 jobs:
   Test:
     runs-on: ubuntu-latest
+    permissions:
+      # Required: allow read access to the content for analysis.
+      contents: read
+      # Optional: allow read access to pull request. Use with `only-new-issues` option.
+      pull-requests: read
+      # Optional: allow write access to checks to allow the action to annotate code in the PR.
+      checks: write
+
     steps:
     - uses: actions/checkout@v4
 
@@ -49,9 +57,21 @@ jobs:
           go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}
           go-build-${{ runner.os }}-${{ runner.arch }}
 
+    - name: Ensure tidy
+      run: go mod tidy -diff
+
     - name: Build
       run: go build ./...
 
     - name: Test
       run: go test -v ./...
 
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        only-new-issues: true
+
+    - name: Run Gosec Security Scanner
+      uses: securego/gosec@master
+      with:
+        args: ./...
