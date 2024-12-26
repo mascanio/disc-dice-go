@@ -40,7 +40,9 @@ jobs:
     - name: Go Build Cache
       uses: actions/cache@v4
       with:
-        path: ${{ steps.go-cache-paths.outputs.go-cache-dir }}, ${{ steps.go-cache-paths.outputs.go-mod-cache-dir }}
+        path: |
+          ${{ steps.go-cache-paths.outputs.go-cache-dir }}
+          ${{ steps.go-cache-paths.outputs.go-mod-cache-dir }}
         key: go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}-${{ steps.key.outputs.key }}
         restore-keys: |
           go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}
