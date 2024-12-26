@@ -25,7 +25,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}(time.Now())
 		messager := parser.InputToMessager(m.Content)
 		if messager != nil {
-			s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+			_, err := s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+			if err != nil {
+				slog.Error("error sending reply", slog.Any("err", err))
+			}
 		}
 	}()
 }
