@@ -25,7 +25,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}(time.Now())
 		messager := parser.InputToMessager(m.Content)
 		if messager != nil {
-			s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+			_, err := s.ChannelMessageSendReply(m.ChannelID, messager.Message(), m.Reference())
+			if err != nil {
+				slog.Error("error sending reply", slog.Any("err", err))
+			}
 		}
 	}()
 }
@@ -52,7 +55,9 @@ func main() {
 		slog.Error("Error opening connection", slog.Any("err", err))
 		return
 	}
-	defer dg.Close()
+	defer func() {
+		_ = dg.Close()
+	}()
 
 	slog.Info("Bot is now running. Press CTRL+C to exit.")
 	sc := make(chan os.Signal, 1)
