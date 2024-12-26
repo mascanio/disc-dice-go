@@ -43,9 +43,9 @@ jobs:
         path: |
           ${{ steps.go-cache-paths.outputs.go-cache-dir }}
           ${{ steps.go-cache-paths.outputs.go-mod-cache-dir }}
-        key: go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}-${{ steps.key.outputs.key }}
+        key: go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-go-${{ steps.setup.outputs.go-version }}-${{ steps.key.outputs.key }}
         restore-keys: |
-          go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-${{ steps.setup.outputs.go-version }}
+          go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}-go-${{ steps.setup.outputs.go-version }}
           go-build-${{ runner.os }}-${{ runner.arch }}-${{ steps.system-info.outputs.release }}
           go-build-${{ runner.os }}-${{ runner.arch }}
 
